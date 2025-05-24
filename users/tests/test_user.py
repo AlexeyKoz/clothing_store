@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth.models import User
+from users.models import UserProfile
 
 class UserRegisterValidationTests(TestCase):
 
@@ -57,3 +59,24 @@ class UserRegisterValidationTests(TestCase):
         data['email'] = 'not-an-email'
         response = self.client.post(reverse('register'), data)
         self.assertIn("email", response.context['form'].errors)
+
+    def test_successful_registration_creates_user(self):
+        response = self.client.post(reverse('register'), self.base_valid_data())
+        self.assertEqual(response.status_code, 302)  # redirect to login
+        self.assertTrue(User.objects.filter(username='testuser').exists())
+
+    def test_duplicate_email_is_rejected(self):
+        # Register once
+        self.client.post(reverse('register'), self.base_valid_data())
+        # Try again with same email
+        data = self.base_valid_data()
+        data['username'] = 'anotheruser'
+        response = self.client.post(reverse('register'), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("email", response.context['form'].errors)
+
+    def test_user_profile_is_created(self):
+        self.client.post(reverse('register'), self.base_valid_data())
+        user = User.objects.get(username='testuser')
+        profile_exists = UserProfile.objects.filter(user=user).exists()
+        self.assertTrue(profile_exists)

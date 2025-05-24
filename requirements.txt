@@ -6,3 +6,5 @@ jupyter==1.0.0
 ipython==8.24.0
 sqlparse==0.4.4
 asgiref==3.8.1
+coverage==7.8.2
+

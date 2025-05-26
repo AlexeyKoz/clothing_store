@@ -11,9 +11,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='regular')
     address = models.TextField(blank=True)
+    country = models.CharField(max_length=2, default='IL')
+    date_of_birth = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return self.user.username
-from django.db import models
-
-# Create your models here.
+        return f"{self.user.username} ({self.user_type})"

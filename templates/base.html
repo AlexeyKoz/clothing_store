@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Clothing Store{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <!-- ✅ Navbar -->
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            {% for cat in categories %}
+                <li><a href="{% url 'catalog:category' slug=cat.slug %}">{{ cat.name }}</a></li>
+            {% endfor %}
+            <li><a href="{% url 'catalog:brands' %}">Brands</a></li>
+            <li><a href="{% url 'cart:view' %}">Cart</a></li>
+
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">My Account</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <hr>
+
+    <!-- ✅ Контент -->
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

@@ -4,7 +4,7 @@ from .models import Brand
 
 def brand_list(request):
     brands = Brand.objects.all()
-    return render(request, 'catalog/brands.html', {'brands': brands})
+    return render(request, 'catalog/brands_list.html', {'brands': brands})
 
 
 def category_detail(request, slug):
@@ -13,4 +13,9 @@ def category_detail(request, slug):
     return render(request, 'catalog/category.html', {
         'category': category,
         'products': products
+
     })
+
+def brand_list(request):
+    brands = Brand.objects.all()
+    return render(request, 'catalog/brands_list.html', {'brands': brands})

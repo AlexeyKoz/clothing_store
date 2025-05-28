@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Category: {{ category.name }}</h1>
+
+  <ul>
+    {% for product in products %}
+      <li>
+        <strong>{{ product.name }}</strong> — ${{ product.price }}
+      </li>
+    {% empty %}
+      <li>No products in this category.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

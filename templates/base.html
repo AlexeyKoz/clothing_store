@@ -14,7 +14,7 @@
             {% for cat in categories %}
                 <li><a href="{% url 'catalog:category' slug=cat.slug %}">{{ cat.name }}</a></li>
             {% endfor %}
-            <li><a href="{% url 'catalog:brands' %}">Brands</a></li>
+            <li><a href="{% url 'catalog:brand_list' %}">Brands</a></li>
             <li><a href="{% url 'cart:view' %}">Cart</a></li>
 
             {% if user.is_authenticated %}

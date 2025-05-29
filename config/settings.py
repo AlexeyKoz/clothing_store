@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+
     # Allauth
     'allauth',
     'allauth.account',
@@ -31,7 +32,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'core',
-    'catalog',
+    'catalog.apps.CatalogConfig',
     'users',
     'cart',
     'orders',

@@ -4,4 +4,17 @@
 
 {% block content %}
 <h1>Welcome to the Clothing Store!</h1>
+
+<h2>🔥 Popular Products</h2>
+<div class="popular-products">
+  {% for product in popular_products %}
+    <div class="product-card">
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.price }} $</p>
+      <p>Brand: {{ product.brand.name }}</p>
+    </div>
+  {% empty %}
+    <p>No popular products available.</p>
+  {% endfor %}
+</div>
 {% endblock %}

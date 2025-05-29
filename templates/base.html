@@ -10,7 +10,14 @@
     <!-- ✅ Navbar -->
     <nav>
         <ul>
+             <form action="{% url 'catalog:search_products' %}" method="get">
+            <input type="text" name="q" placeholder="Search products...">
+                <button type="submit">Search</button>
+            </form>
+            <h1></h1>
             <li><a href="/">Home</a></li>
+
+
             {% for cat in categories %}
                 <li><a href="{% url 'catalog:category' slug=cat.slug %}">{{ cat.name }}</a></li>
             {% endfor %}

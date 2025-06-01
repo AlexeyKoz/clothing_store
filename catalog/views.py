@@ -44,3 +44,11 @@ def search_products(request):
         "query": query,
         "results": results
     })
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    reviews = product.review_set.all()  # если связь стандартная
+    return render(request, "catalog/product_detail.html", {
+        "product": product,
+        "reviews": reviews,
+    })

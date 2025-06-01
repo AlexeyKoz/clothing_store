@@ -7,19 +7,28 @@
     <div class="product-list">
       {% for product in products %}
         <div class="product-item">
-          <h3>{{ product.name }}</h3>
+          <!-- ✅ Ссылка на детальную страницу товара -->
+          <h3>
+            <a href="{% url 'catalog:product_detail' product.id %}">
+              {{ product.name }}
+            </a>
+          </h3>
+
           {% if product.image %}
             <img src="{{ product.image.url }}" alt="{{ product.name }}" width="150">
           {% else %}
             <p>No image available</p>
           {% endif %}
+
           <p>Price: ${{ product.price }}</p>
           <p>Brand: {{ product.brand.name }}</p>
-          <p>Sizes: 
+
+          <p>Sizes:
             {% for size in product.sizes.all %}
               {{ size.name }}{% if not forloop.last %}, {% endif %}
             {% endfor %}
           </p>
+
           <p>Colors: 
             {% for color in product.colors.all %}
               <span style="display:inline-block;width:10px;height:10px;background-color:{{ color.hex_code }};border:1px solid #000;margin-right:5px;"></span>

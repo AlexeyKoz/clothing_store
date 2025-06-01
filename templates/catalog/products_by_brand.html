@@ -1,12 +1,24 @@
 {% extends "base.html" %}
 
+{% block title %}
+  Products by {{ brand.name }}
+{% endblock %}
+
 {% block content %}
   <h1>Products from {{ brand.name }}</h1>
 
-  <ul>
+  <ul class="product-list">
     {% for product in products %}
-      <li>
-        <strong>{{ product.name }}</strong> — ${{ product.price }}
+      <li class="product-item">
+        <!-- ✅ Ссылка на детальную страницу товара -->
+        <a href="{% url 'catalog:product_detail' product.id %}">
+          <strong>{{ product.name }}</strong>
+        </a>
+        — ${{ product.price }}
+
+        <!-- ✅ Можно сюда добавить кнопки позже -->
+        <!-- <button>Add to Cart</button> -->
+        <!-- <button>♥ Like</button> -->
       </li>
     {% empty %}
       <li>No products for this brand.</li>

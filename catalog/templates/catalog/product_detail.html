@@ -4,27 +4,53 @@
 
 {% block content %}
 <h1>{{ product.name }}</h1>
+
 <p><strong>Price:</strong> ${{ product.price }}</p>
 <p><strong>Description:</strong> {{ product.description }}</p>
 <p><strong>Brand:</strong> {{ product.brand.name }}</p>
-<img src="{{ product.image.url }}" alt="{{ product.name }}" width="200" />
 
+{% if product.image %}
+  <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+{% else %}
+  <p><em>No image available</em></p>
+{% endif %}
+
+<!-- 🛒 Add to cart button -->
 <form method="post" action="{% url 'cart:add_to_cart' product.id %}">
   {% csrf_token %}
   <button type="submit">🛒 Add to cart</button>
 </form>
 
-<!-- (по желанию) Кнопка лайка -->
+<!-- ❤️ Like button -->
 <form method="post" action="{% url 'catalog:like_product' product.id %}">
   {% csrf_token %}
   <button type="submit">❤️ Like</button>
 </form>
 
 <hr>
+
 <h3>📝 Reviews</h3>
-{% for review in reviews %}
-  <p><strong>{{ review.user.username }}</strong>: {{ review.content }}</p>
-{% empty %}
+
+{% if reviews %}
+  <ul>
+    {% for review in reviews %}
+      <li>
+        <strong>{{ review.user.username }}</strong> —
+        {{ review.rating }}★
+        <br>
+        {{ review.comment }}
+        <br>
+        <small><em>{{ review.created_at|date:"F j, Y, H:i" }}</em></small>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
   <p>No reviews yet.</p>
-{% endfor %}
+<form method="post" action="{% url 'cart:add_to_cart' product.id %}">
+  {% csrf_token %}
+  <button type="submit">🛒 Add to cart</button>
+</form>
+
+{% endif %}
+
 {% endblock %}

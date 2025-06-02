@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Brand, Product, Category
 from django.core.cache import cache
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 def brand_list(request):
@@ -47,8 +49,13 @@ def search_products(request):
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    reviews = product.review_set.all()  # если связь стандартная
+    reviews = product.reviews.all()
     return render(request, "catalog/product_detail.html", {
         "product": product,
         "reviews": reviews,
     })
+
+def like_product(request, product_id):
+    # Здесь можно реализовать функционал "лайка" — например, просто заглушку
+    print(f"Product {product_id} liked!")  # или логика лайков в базе
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('catalog:product_detail', args=[product_id])))

@@ -22,7 +22,7 @@
                 <li><a href="{% url 'catalog:category' slug=cat.slug %}">{{ cat.name }}</a></li>
             {% endfor %}
             <li><a href="{% url 'catalog:brand_list' %}">Brands</a></li>
-            <li><a href="{% url 'cart:view' %}">Cart</a></li>
+            <li><a href="{% url 'cart:view_cart' %}">Cart</a></li>
 
             {% if user.is_authenticated %}
                 <li><a href="{% url 'dashboard' %}">My Account</a></li>

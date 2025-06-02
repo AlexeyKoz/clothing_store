@@ -14,9 +14,11 @@
           <button type="submit">❌ Remove</button>
         </form>
       </li>
+    <a href="{% url 'cart:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
     {% endfor %}
   </ul>
   <p><strong>Total:</strong> ${{ total }}</p>
+
 {% else %}
   <p>Your cart is empty.</p>
 {% endif %}

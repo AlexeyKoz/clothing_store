@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from catalog.models import Product
 from .models import CartItem
 from django.contrib import messages
+from decimal import Decimal
 
 @login_required
 def add_to_cart(request, product_id):
@@ -27,3 +28,19 @@ def remove_from_cart(request, product_id):
     item.delete()
     messages.success(request, "Item removed from your cart.")
     return redirect("cart:view_cart")
+
+
+@login_required
+def checkout(request):
+    items = CartItem.objects.filter(user=request.user)
+    subtotal = sum(item.total_price() for item in items)
+    tax_rate = Decimal("0.18")  # taxes at 18%
+    tax = (subtotal * tax_rate).quantize(Decimal("0.01"))  # округляем до 2 знаков
+    total = (subtotal + tax).quantize(Decimal("0.01"))
+
+    return render(request, "cart/checkout.html", {
+        "items": items,
+        "subtotal": subtotal,
+        "tax": tax,
+        "total": total
+    })

@@ -6,7 +6,11 @@
   {% if results %}
     <ul>
       {% for product in results %}
-        <li>{{ product.name }} — ${{ product.price }}</li>
+        <li>
+  <a href="{% url 'catalog:product_detail' product.id %}">
+    {{ product.name }}
+  </a> — ${{ product.price }}
+</li>
       {% endfor %}
     </ul>
   {% else %}

@@ -9,7 +9,7 @@
 <div class="popular-products">
   {% for product in popular_products %}
     <div class="product-card">
-      <h3>{{ product.name }}</h3>
+      <h3><a href="{% url 'catalog:product_detail' product.id %}">{{ product.name }}</a></h3>
       <p>{{ product.price }} $</p>
       <p>Brand: {{ product.brand.name }}</p>
     </div>

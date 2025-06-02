@@ -13,3 +13,4 @@ class CartItem(models.Model):
 
     def total_price(self):
         return self.quantity * self.product.price
+

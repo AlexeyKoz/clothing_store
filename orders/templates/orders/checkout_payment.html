@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>💳 Payment Information</h1>
+
+<form method="post">
+  {% csrf_token %}
+
+  <h3>Choose a payment method:</h3>
+  <p>
+    <label><input type="radio" name="payment_method" value="credit_card" required> Credit Card</label><br>
+    <label><input type="radio" name="payment_method" value="paypal"> PayPal</label><br>
+    <label><input type="radio" name="payment_method" value="bank_transfer"> Bank Transfer</label>
+  </p>
+
+  <h3>Number of Payments:</h3>
+  <select name="installments" required>
+    <option value="1">1 (Full payment)</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="6">6</option>
+    <option value="12">12</option>
+  </select>
+
+  <hr>
+  <p>
+    <label>
+      <input type="checkbox" required>
+      I confirm the purchase, understand the charges, and agree to the <a href="#">terms</a>.
+    </label>
+  </p>
+
+  <button type="submit">🔺 Continue to Order Summary</button>
+</form>
+
+{% endblock %}

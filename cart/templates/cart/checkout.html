@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 <h1>🧾 Checkout</h1>
 
@@ -15,16 +15,17 @@
   <p><strong>Tax (17%):</strong> ${{ tax }}</p>
   <p><strong>Total:</strong> ${{ total }}</p>
 
-  <form method="post">
-    {% csrf_token %}
-    <p>
-      <label>
-        <input type="checkbox" required>
-        I confirm that I understand what I'm buying and agree to the terms.
-      </label>
-    </p>
-    <button type="submit" disabled>🚚 Continue to payment (coming soon)</button>
-  </form>
+  <form action="{% url 'orders:create_order' %}" method="post">
+  {% csrf_token %}
+  <p>
+    <label>
+      <input type="checkbox" name="confirm" required>
+      I confirm that I understand what I'm buying and agree to the terms.
+    </label>
+  </p>
+  <button type="submit">🚚 Continue to order summary</button>
+</form>
+
 {% else %}
   <p>Your cart is empty.</p>
 {% endif %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>📦 Delivery Information</h1>
+
+<h3>Saved Shipping Address</h3>
+<ul>
+  <li><strong>Name:</strong> {{ address.full_name }}</li>
+  <li><strong>Address:</strong> {{ address.address }}</li>
+  <li><strong>City:</strong> {{ address.city }}</li>
+  <li><strong>ZIP:</strong> {{ address.zip_code }}</li>
+  <li><strong>Country:</strong> {{ address.country }}</li>
+</ul>
+
+<hr>
+
+<form method="post">
+  {% csrf_token %}
+  <h3>🧾 Billing Information</h3>
+  <p>
+    <label for="billing_name">Name on the invoice (optional):</label><br>
+    <input type="text" name="billing_name" id="billing_name" placeholder="e.g. someone else">
+  </p>
+
+  <button type="submit">➡️ Continue to payment</button>
+</form>
+
+<p style="margin-top:20px;">
+  <a href="{% url 'profile:edit_address' %}">✏️ Edit shipping address</a>
+</p>
+{% endblock %}

@@ -1,24 +1,58 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 <h1>🛒 Your Cart</h1>
 
 {% if items %}
-  <ul>
-    {% for item in items %}
-      <li>
-        <a href="{% url 'catalog:product_detail' item.product.id %}">{{ item.product.name }}</a>
-        × {{ item.quantity }} — ${{ item.total_price }}
-        <form method="post" action="{% url 'cart:remove_from_cart' item.product.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit">❌ Remove</button>
-        </form>
-      </li>
-    <a href="{% url 'cart:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
-    {% endfor %}
-  </ul>
-  <p><strong>Total:</strong> ${{ total }}</p>
+  <table style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 2px solid #ccc;">
+        <th>#</th>
+        <th>Product</th>
+        <th style="text-align:right;">Price</th>
+        <th style="text-align:center;">Quantity</th>
+        <th style="text-align:right;">Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr style="border-bottom: 1px solid #eee;">
+        <td>{{ forloop.counter }}</td>
+        <td>
+          <a href="{% url 'catalog:product_detail' item.product.id %}">
+            {{ item.product.name }}
+          </a>
+        </td>
+        <td style="text-align:right;">${{ item.product.price }}</td>
+        <td style="text-align:center;">
+          <form method="post" action="{% url 'cart:update_quantity' item.product.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" name="action" value="decrease">➖</button>
+            {{ item.quantity }}
+            <button type="submit" name="action" value="increase">➕</button>
+          </form>
+        </td>
+        <td style="text-align:right;">
+          <form method="post" action="{% url 'cart:remove_from_cart' item.product.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" style="border:none; background:none;">
+              <img src="{% static 'icons/trash.svg' %}" alt="Remove" width="20" height="20">
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
+  <hr style="margin-top:20px; border-top: 2px solid #000;">
+  <p style="text-align:right; font-weight:bold;">Total: ${{ total }}</p>
+
+  <div style="text-align:right; margin-top: 20px;">
+    <a href="{% url 'cart:checkout' %}">
+      <button>🧾 Proceed to Checkout</button>
+    </a>
+  </div>
 {% else %}
   <p>Your cart is empty.</p>
 {% endif %}

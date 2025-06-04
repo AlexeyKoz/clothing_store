@@ -2,7 +2,14 @@ from django import forms
 from allauth.account.forms import SignupForm
 from django.core.validators import RegexValidator
 import datetime
-from users.models import UserProfile  # убедись, что путь корректный
+from users.models import UserProfile
+from .models import ShippingAddress
+
+class ShippingAddressForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = ['full_name', 'address', 'city', 'zip_code', 'country']
+
 
 only_letters = RegexValidator(r'^[a-zA-Zа-яА-ЯёЁ\-\' ]+$', 'Only letters are allowed.')
 

@@ -1,32 +1,54 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1>✅ Order Summary</h1>
+<h1>✅ Final Order Review</h1>
 
-<h3>📦 Shipping Address</h3>
-<p>{{ shipping_address.full_name }}</p>
-<p>{{ shipping_address.address_line }}, {{ shipping_address.city }}, {{ shipping_address.postal_code }}</p>
-<p>{{ shipping_address.country }}</p>
-
-<h3>💳 Payment Details</h3>
-<p>Method: {{ payment_method }}</p>
-<p>Installments: {{ installments }}</p>
+<!-- Order Metadata -->
+<p><strong>Order Number:</strong> {{ order.order_number }}</p>
+<p><strong>Date:</strong> {{ order.created_at|date:"d.m.Y" }}</p>
+<p><strong>Status:</strong> {{ order.status }}</p>
 
 <hr>
-<h3>🛍 Your items:</h3>
+
+<!-- Shipping Information -->
+<h3>📦 Shipping Address</h3>
+<p><strong>Name:</strong> {{ order.shipping_address.full_name }}</p>
+<p><strong>Address:</strong> {{ order.shipping_address.address_line }}</p>
+<p><strong>City:</strong> {{ order.shipping_address.city }}</p>
+<p><strong>ZIP:</strong> {{ order.shipping_address.postal_code }}</p>
+<p><strong>Country:</strong> {{ order.shipping_address.country }}</p>
+
+<hr>
+
+<!-- Payment Method -->
+<h3>💳 Payment Method</h3>
+<p><strong>Method:</strong> {{ order.payment_method|title }}</p>
+<p><strong>Installments:</strong> {{ order.installments }}</p>
+
+<hr>
+
+<!-- Order Items -->
+<h3>🛍 Items:</h3>
 <ul>
-  {% for item in items %}
-    <li>{{ item.product.name }} × {{ item.quantity }} — ${{ item.total_price }}</li>
+  {% for item in order.items.all %}
+    <li>{{ item.product.name }} × {{ item.quantity }} — ${{ item.price }}</li>
   {% endfor %}
 </ul>
 
-<p><strong>Subtotal:</strong> ${{ subtotal }}</p>
-<p><strong>Tax (17%):</strong> ${{ tax }}</p>
-<p><strong>Total:</strong> ${{ total }}</p>
+<!-- Totals -->
+<p><strong>Subtotal:</strong> ${{ order.subtotal }}</p>
+<p><strong>Tax (17%):</strong> ${{ order.tax }}</p>
+<p><strong>Total:</strong> ${{ order.total_with_tax }}</p>
 
 <hr>
-<form method="post">
+
+<!-- Confirm and PDF -->
+<form method="post" action="{% url 'orders:finalize_order' order.id %}">
   {% csrf_token %}
-  <button type="submit" class="btn btn-success">✅ Place Order</button>
+  <button type="submit" class="btn btn-success">✅ Place Final Order</button>
 </form>
+
+<p style="margin-top: 15px;">
+  <a href="{% url 'orders:download_pdf' order.id %}" class="btn">📄 Download as PDF</a>
+</p>
+
 {% endblock %}

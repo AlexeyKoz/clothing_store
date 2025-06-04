@@ -2,7 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from cart.models import CartItem
 from .models import Order, OrderItem
-from .forms import OrderForm
+from orders.models import ShippingAddress
+from django.contrib import messages
+
 
 @login_required
 def order_summary(request):
@@ -63,7 +65,7 @@ def checkout_address(request):
         address = request.user.shippingaddress
     except ShippingAddress.DoesNotExist:
         messages.warning(request, "Please fill your shipping address in your profile.")
-        return redirect("profile:edit_address")
+        return redirect("users:edit_address")
 
     if request.method == "POST":
         request.session["checkout_name"] = request.POST.get("billing_name", "")
@@ -73,15 +75,22 @@ def checkout_address(request):
         "address": address,
     })
 
-# orders/views.py
 @login_required
 def checkout_payment(request):
     if request.method == "POST":
+        payment_method = request.POST.get("payment_method")
+        installments = request.POST.get("installments")
+        terms_accepted = request.POST.get("confirm")
+
+        if not (payment_method and installments and terms_accepted):
+            messages.error(request, "Please fill in all fields and confirm the terms.")
+            return render(request, "orders/checkout_payment.html")
+
         # Сохраняем в сессию
-        request.session["payment_method"] = request.POST.get("payment_method")
-        request.session["installments"] = request.POST.get("installments")
-        request.session["terms_accepted"] = True
+        request.session["payment_method"] = payment_method
+        request.session["installments"] = installments
+        request.session["terms_accepted"] = terms_accepted == "on"
+
         return redirect("orders:order_summary")
+
     return render(request, "orders/checkout_payment.html")
-
-

@@ -1,4 +1,11 @@
 from django import forms
+from orders.models import ShippingAddress
+
+class ShippingAddressForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = ['full_name', 'address', 'city', 'zip_code', 'country']
+
 
 class OrderForm(forms.Form):
     full_name = forms.CharField(label="Full name", max_length=100)

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h1>💳 Payment Information</h1>
 
@@ -8,10 +7,34 @@
 
   <h3>Choose a payment method:</h3>
   <p>
-    <label><input type="radio" name="payment_method" value="credit_card" required> Credit Card</label><br>
-    <label><input type="radio" name="payment_method" value="paypal"> PayPal</label><br>
-    <label><input type="radio" name="payment_method" value="bank_transfer"> Bank Transfer</label>
+    <label><input type="radio" name="payment_method" value="credit_card" required onclick="toggleCardForm(true)"> Credit Card</label><br>
+    <label><input type="radio" name="payment_method" value="paypal" onclick="toggleCardForm(false)"> PayPal</label><br>
+    <label><input type="radio" name="payment_method" value="bank_transfer" onclick="toggleCardForm(false)"> Bank Transfer</label>
   </p>
+
+  <div id="cardFields" style="display:none; margin-top:20px;">
+    <h4>Enter Credit Card Details</h4>
+    <p>
+      <label for="card_number">Card Number:</label><br>
+      <input type="text" id="card_number" name="card_number" pattern="\d{16}" placeholder="1234 5678 9012 3456" required>
+    </p>
+    <p>
+      <label for="expiry_month">Expiry Month:</label><br>
+      <input type="number" id="expiry_month" name="expiry_month" min="1" max="12" required>
+    </p>
+    <p>
+      <label for="expiry_year">Expiry Year:</label><br>
+      <input type="number" id="expiry_year" name="expiry_year" min="{{ current_year }}" required>
+    </p>
+    <p>
+      <label for="cvc">CVC:</label><br>
+      <input type="text" id="cvc" name="cvc" pattern="\d{3}" required>
+    </p>
+    <p>
+      <label for="card_name">Cardholder Name:</label><br>
+      <input type="text" id="card_name" name="card_name" required>
+    </p>
+  </div>
 
   <h3>Number of Payments:</h3>
   <select name="installments" required>
@@ -25,7 +48,7 @@
   <hr>
   <p>
     <label>
-      <input type="checkbox" required>
+      <input type="checkbox" name="confirm" required>
       I confirm the purchase, understand the charges, and agree to the <a href="#">terms</a>.
     </label>
   </p>
@@ -33,4 +56,18 @@
   <button type="submit">🔺 Continue to Order Summary</button>
 </form>
 
+<script>
+  function toggleCardForm(show) {
+    const cardSection = document.getElementById('cardFields');
+    const inputs = cardSection.querySelectorAll('input');
+
+    if (show) {
+      cardSection.style.display = 'block';
+      inputs.forEach(input => input.required = true);
+    } else {
+      cardSection.style.display = 'none';
+      inputs.forEach(input => input.required = false);
+    }
+  }
+</script>
 {% endblock %}

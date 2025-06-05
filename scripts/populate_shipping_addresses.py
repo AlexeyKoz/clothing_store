@@ -10,7 +10,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 from django.contrib.auth.models import User
-from users.models import ShippingAddress  # Замени путь, если у тебя другой
+from orders.models import ShippingAddress  # Замени путь, если у тебя другой
 fake = Faker()
 
 def create_shipping_addresses():

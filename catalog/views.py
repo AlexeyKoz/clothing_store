@@ -1,5 +1,8 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from .models import Brand, Product, Category
+from django.views.decorators.http import require_POST
+from .models import Brand, Product, Category, ProductLike
 from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -50,12 +53,33 @@ def search_products(request):
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     reviews = product.reviews.all()
-    return render(request, "catalog/product_detail.html", {
-        "product": product,
-        "reviews": reviews,
-    })
+    liked = False
+    if request.user.is_authenticated:
+        liked = ProductLike.objects.filter(
+            user=request.user, product=product
+        ).exists()
+    like_count = product.likes.count()
+    return render(
+        request,
+        "catalog/product_detail.html",
+        {
+            "product": product,
+            "reviews": reviews,
+            "liked": liked,
+            "like_count": like_count,
+        },
+    )
 
+@require_POST
+@login_required
 def like_product(request, product_id):
-    # Здесь можно реализовать функционал "лайка" — например, просто заглушку
-    print(f"Product {product_id} liked!")  # или логика лайков в базе
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('catalog:product_detail', args=[product_id])))
+    product = get_object_or_404(Product, id=product_id)
+    like, created = ProductLike.objects.get_or_create(user=request.user, product=product)
+    if not created:
+        like.delete()
+        messages.info(request, "Лайк удалён.")
+    else:
+        messages.success(request, "Товар понравился!")
+    return HttpResponseRedirect(
+        request.META.get("HTTP_REFERER", reverse("catalog:product_detail", args=[product_id]))
+    )

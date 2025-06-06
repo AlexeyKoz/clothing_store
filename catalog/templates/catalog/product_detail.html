@@ -25,6 +25,12 @@
 <form method="post" action="{% url 'catalog:like_product' product.id %}">
   {% csrf_token %}
   <button type="submit">❤️ Like</button>
+  {% if liked %}
+    <button type="submit">💔 Dislike</button>
+  {% else %}
+    <button type="submit">❤️ Like</button>
+  {% endif %}
+  <span>👍 {{ like_count }}</span>
 </form>
 <hr>
 

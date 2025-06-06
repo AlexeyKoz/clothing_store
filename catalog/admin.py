@@ -7,4 +7,3 @@ admin.site.register(Color)
 admin.site.register(Size)
 admin.site.register(Product)
 admin.site.register(ProductLike)
-# Register your models here.

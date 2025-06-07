@@ -6,6 +6,7 @@ from .models import Brand, Product, Category, ProductLike
 from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from reviews.models import Review
 
 
 def brand_list(request):
@@ -50,15 +51,28 @@ def search_products(request):
         "results": results
     })
 
+
+# Добавьте этот импорт в начало файла catalog/views.py:
+from reviews.models import Review
+
+
+# Замените существующую функцию product_detail на эту:
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    reviews = product.reviews.all()
+    reviews = product.reviews.all().order_by('-created_at')
     liked = False
+    user_has_review = False
+
     if request.user.is_authenticated:
         liked = ProductLike.objects.filter(
             user=request.user, product=product
         ).exists()
+        user_has_review = Review.objects.filter(
+            user=request.user, product=product
+        ).exists()
+
     like_count = product.likes.count()
+
     return render(
         request,
         "catalog/product_detail.html",
@@ -67,6 +81,7 @@ def product_detail(request, product_id):
             "reviews": reviews,
             "liked": liked,
             "like_count": like_count,
+            "user_has_review": user_has_review,
         },
     )
 

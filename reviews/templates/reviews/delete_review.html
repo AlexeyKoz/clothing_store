@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Review{% endblock %}
+
+{% block content %}
+<h1>Delete Review</h1>
+
+<p>Are you sure you want to delete your review for <strong>{{ review.product.name }}</strong>?</p>
+
+<!-- Временная отладочная информация -->
+{% if not review.product %}
+<p style="color: red;">ERROR: Product not found!</p>
+{% endif %}
+
+<div style="border: 1px solid #ddd; padding: 15px; margin: 20px 0; background-color: #f9f9f9;">
+    <p><strong>Rating:</strong> {{ review.rating }}★</p>
+    <p><strong>Comment:</strong> {{ review.comment }}</p>
+    <p><small><em>Created: {{ review.created_at|date:"F j, Y, H:i" }}</em></small></p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="padding: 8px 20px; background-color: #dc3545; color: white; border: none; cursor: pointer;">
+        🗑️ Yes, Delete
+    </button>
+    <a href="{% if review.product %}{% url 'catalog:product_detail' review.product.id %}{% else %}/{% endif %}" style="margin-left: 10px;">
+        Cancel
+    </a>
+</form>
+{% endblock %}

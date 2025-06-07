@@ -16,32 +16,61 @@
 {% endif %}
 
 <!-- 🛒 Add to cart button -->
-<form method="post" action="{% url 'cart:add_to_cart' product.id %}">
+<form method="post" action="{% url 'cart:add_to_cart' product.id %}" style="display: inline;">
   {% csrf_token %}
   <button type="submit">🛒 Add to cart</button>
 </form>
 
 <!-- ❤️ Like button -->
-<form method="post" action="{% url 'catalog:like_product' product.id %}">
+<form method="post" action="{% url 'catalog:like_product' product.id %}" style="display: inline;">
   {% csrf_token %}
-  <button type="submit">❤️ Like</button>
   {% if liked %}
-    <button type="submit">💔 Dislike</button>
+    <button type="submit">💔 Unlike</button>
   {% else %}
     <button type="submit">❤️ Like</button>
   {% endif %}
   <span>👍 {{ like_count }}</span>
 </form>
+
 <hr>
 
 <h3>📝 Reviews</h3>
 
+<!-- Кнопка добавления отзыва для авторизованных пользователей -->
+{% if user.is_authenticated %}
+  {% if not user_has_review %}
+    <p>
+      <a href="{% url 'reviews:add_review' product.id %}">
+        <button style="background-color: #28a745; color: white; padding: 8px 15px; border: none; cursor: pointer;">
+          ✍️ Write a Review
+        </button>
+      </a>
+    </p>
+  {% endif %}
+{% else %}
+  <p><em>Please <a href="{% url 'account_login' %}">login</a> to write a review.</em></p>
+{% endif %}
+
 {% if reviews %}
-  <ul>
+  <ul style="list-style: none; padding: 0;">
     {% for review in reviews %}
-      <li>
+      <li style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background-color: #f9f9f9;">
         <strong>{{ review.user.username }}</strong> —
         {{ review.rating }}★
+
+        <!-- Кнопки редактирования/удаления для автора отзыва -->
+        {% if user.is_authenticated and review.user == user %}
+          <span style="float: right;">
+            <a href="{% url 'reviews:edit_review' review.id %}" style="color: #007bff; text-decoration: none;">
+              ✏️ Edit
+            </a>
+            |
+            <a href="{% url 'reviews:delete_review' review.id %}" style="color: #dc3545; text-decoration: none;">
+              🗑️ Delete
+            </a>
+          </span>
+        {% endif %}
+
         <br>
         {{ review.comment }}
         <br>
@@ -50,12 +79,7 @@
     {% endfor %}
   </ul>
 {% else %}
-  <p>No reviews yet.</p>
-<form method="post" action="{% url 'cart:add_to_cart' product.id %}">
-  {% csrf_token %}
-  <button type="submit">🛒 Add to cart</button>
-</form>
-
+  <p>No reviews yet. Be the first to review this product!</p>
 {% endif %}
 
 {% endblock %}

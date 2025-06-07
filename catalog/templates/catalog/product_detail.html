@@ -55,8 +55,7 @@
   <ul style="list-style: none; padding: 0;">
     {% for review in reviews %}
       <li style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background-color: #f9f9f9;">
-        <strong>{{ review.user.username }}</strong> —
-        {{ review.rating }}★
+        <strong>{{ review.user.username }}</strong>
 
         <!-- Кнопки редактирования/удаления для автора отзыва -->
         {% if user.is_authenticated and review.user == user %}

@@ -7,13 +7,8 @@
 
 <p>Are you sure you want to delete your review for <strong>{{ review.product.name }}</strong>?</p>
 
-<!-- Временная отладочная информация -->
-{% if not review.product %}
-<p style="color: red;">ERROR: Product not found!</p>
-{% endif %}
 
 <div style="border: 1px solid #ddd; padding: 15px; margin: 20px 0; background-color: #f9f9f9;">
-    <p><strong>Rating:</strong> {{ review.rating }}★</p>
     <p><strong>Comment:</strong> {{ review.comment }}</p>
     <p><small><em>Created: {{ review.created_at|date:"F j, Y, H:i" }}</em></small></p>
 </div>

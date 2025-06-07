@@ -17,14 +17,6 @@
     {% csrf_token %}
     
     <div style="margin-bottom: 15px;">
-        <label for="{{ form.rating.id_for_label }}">{{ form.rating.label }}:</label><br>
-        {{ form.rating }}
-        {% if form.rating.errors %}
-            <div style="color: red;">{{ form.rating.errors }}</div>
-        {% endif %}
-    </div>
-    
-    <div style="margin-bottom: 15px;">
         <label for="{{ form.comment.id_for_label }}">{{ form.comment.label }}:</label><br>
         {{ form.comment }}
         {% if form.comment.errors %}

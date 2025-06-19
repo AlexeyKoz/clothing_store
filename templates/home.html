@@ -7,14 +7,37 @@
 
 <h2>🔥 Popular Products</h2>
 <div class="popular-products">
-  {% for product in popular_products %}
-    <div class="product-card">
-      <h3><a href="{% url 'catalog:product_detail' product.id %}">{{ product.name }}</a></h3>
-      <p>{{ product.price }} $</p>
-      <p>Brand: {{ product.brand.name }}</p>
-    </div>
-  {% empty %}
+    {% for info in product_infos %}
+    <a href="{% url 'catalog:product_detail' info.product.id %}" class="product-card-link">
+        <div class="product-card">
+            <div style="position: relative; width: 100%; display: flex; justify-content: center;">
+                {% if info.product.image %}
+                <div class="product-image"><img src="{{ info.product.image.url }}" alt="{{ info.product.name }}"
+                        class="product-image" /></div>
+                {% else %}
+                <div class="product-image">🛍️</div>
+                {% endif %}
+                <form method="post" action="{% url 'catalog:like_product' info.product.id %}" class="like-form"
+                    style="position: absolute; top: 8px; right: 8px; z-index: 2;">
+                    {% csrf_token %}
+                    <button type="submit" class="like-btn" title="Like"
+                        style="background: none; border: none; cursor: pointer; font-size: 1.3rem;">
+                        {% if info.liked %}
+                        <span style="color: #e74c3c;">&#10084;</span>
+                        {% else %}
+                        <span style="color: #bbb;">&#9825;</span>
+                        {% endif %}
+                        <span style="font-size: 0.95rem; color: #555; margin-left: 2px;">{{ info.like_count }}</span>
+                    </button>
+                </form>
+            </div>
+            <h3>{{ info.product.name }}</h3>
+            <p>{{ info.product.price }} $</p>
+            <p>Brand: {{ info.product.brand.name }}</p>
+        </div>
+    </a>
+    {% empty %}
     <p>No popular products available.</p>
-  {% endfor %}
+    {% endfor %}
 </div>
 {% endblock %}

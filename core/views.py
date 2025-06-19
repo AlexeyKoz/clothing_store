@@ -1,18 +1,30 @@
 from django.shortcuts import render
-from catalog.models import Product
+from catalog.models import Product, ProductLike
 from django.core.cache import cache
+from django.db import models
+
 
 def home_view(request):
-    cache_key = "popular_products"
-    popular_products = cache.get(cache_key)
+    # Order products by number of likes (popularity), then by price
+    popular_products = (
+        Product.objects.annotate(num_likes=models.Count('likes'))
+        .order_by('-num_likes', '-price')[:8]
+    )
 
-    if popular_products is None:
-        print("[Redis] Popular products: Cache MISS — querying DB")
-        popular_products = Product.objects.order_by('-price')[:8]
-        cache.set(cache_key, popular_products, timeout=60 * 10)
-    else:
-        print("[Redis] Popular products: Cache HIT")
+    # Prepare product info with like status and count
+    product_infos = []
+    user = request.user if request.user.is_authenticated else None
+    for product in popular_products:
+        liked = False
+        if user:
+            liked = product.likes.filter(user=user).exists()
+        like_count = product.likes.count()
+        product_infos.append({
+            'product': product,
+            'liked': liked,
+            'like_count': like_count,
+        })
 
     return render(request, 'home.html', {
-        "popular_products": popular_products,
+        "product_infos": product_infos,
     })

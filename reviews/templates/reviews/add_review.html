@@ -3,34 +3,32 @@
 {% block title %}Add Review - {{ product.name }}{% endblock %}
 
 {% block content %}
-<h1>Write a Review for {{ product.name }}</h1>
-
-<div style="margin-bottom: 20px;">
-    <p><strong>Product:</strong> {{ product.name }}</p>
-    <p><strong>Price:</strong> ${{ product.price }}</p>
-    {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" width="150">
-    {% endif %}
-</div>
-
-<form method="post" style="max-width: 600px;">
-    {% csrf_token %}
-    
-    <div style="margin-bottom: 15px;">
-        <label for="{{ form.comment.id_for_label }}">{{ form.comment.label }}:</label><br>
-        {{ form.comment }}
-        {% if form.comment.errors %}
-            <div style="color: red;">{{ form.comment.errors }}</div>
+<div class="review-form-container">
+    <h2 style="margin-bottom: 1.5rem;">Write a Review for {{ product.name }}</h2>
+    <div class="review-product-info">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+        <span style="font-size: 2.2rem; color: #bbb;">🛍️</span>
         {% endif %}
+        <div>
+            <div style="font-weight: 600; font-size: 1.1rem;">{{ product.name }}</div>
+            <div style="color: #27ae60; font-size: 1.05rem; font-weight: 500;">${{ product.price }}</div>
+        </div>
     </div>
-    
-    <div>
-        <button type="submit" style="padding: 8px 20px; background-color: #28a745; color: white; border: none; cursor: pointer;">
-            ✅ Submit Review
-        </button>
-        <a href="{% url 'catalog:product_detail' product.id %}" style="margin-left: 10px;">
-            Cancel
-        </a>
-    </div>
-</form>
+    <form method="post" class="review-form">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.comment.id_for_label }}">{{ form.comment.label }}:</label><br>
+            {{ form.comment }}
+            {% if form.comment.errors %}
+            <div class="form-error">{{ form.comment.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="review-form-actions">
+            <button type="submit">✅ Submit Review</button>
+            <a href="{% url 'catalog:product_detail' product.id %}">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

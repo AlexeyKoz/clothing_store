@@ -3,82 +3,75 @@
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
-<h1>{{ product.name }}</h1>
-
-<p><strong>Price:</strong> ${{ product.price }}</p>
-<p><strong>Description:</strong> {{ product.description }}</p>
-<p><strong>Brand:</strong> {{ product.brand.name }}</p>
-
-{% if product.image %}
-  <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
-{% else %}
-  <p><em>No image available</em></p>
-{% endif %}
-
-<!-- 🛒 Add to cart button -->
-<form method="post" action="{% url 'cart:add_to_cart' product.id %}" style="display: inline;">
-  {% csrf_token %}
-  <button type="submit">🛒 Add to cart</button>
-</form>
-
-<!-- ❤️ Like button -->
-<form method="post" action="{% url 'catalog:like_product' product.id %}" style="display: inline;">
-  {% csrf_token %}
-  {% if liked %}
-    <button type="submit">💔 Unlike</button>
-  {% else %}
-    <button type="submit">❤️ Like</button>
-  {% endif %}
-  <span>👍 {{ like_count }}</span>
-</form>
-
-<hr>
-
-<h3>📝 Reviews</h3>
-
-<!-- Кнопка добавления отзыва для авторизованных пользователей -->
-{% if user.is_authenticated %}
-  {% if not user_has_review %}
-    <p>
-      <a href="{% url 'reviews:add_review' product.id %}">
-        <button style="background-color: #28a745; color: white; padding: 8px 15px; border: none; cursor: pointer;">
-          ✍️ Write a Review
-        </button>
-      </a>
-    </p>
-  {% endif %}
-{% else %}
-  <p><em>Please <a href="{% url 'account_login' %}">login</a> to write a review.</em></p>
-{% endif %}
-
-{% if reviews %}
-  <ul style="list-style: none; padding: 0;">
-    {% for review in reviews %}
-      <li style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background-color: #f9f9f9;">
-        <strong>{{ review.user.username }}</strong>
-
-        <!-- Кнопки редактирования/удаления для автора отзыва -->
-        {% if user.is_authenticated and review.user == user %}
-          <span style="float: right;">
-            <a href="{% url 'reviews:edit_review' review.id %}" style="color: #007bff; text-decoration: none;">
-              ✏️ Edit
-            </a>
-            |
-            <a href="{% url 'reviews:delete_review' review.id %}" style="color: #dc3545; text-decoration: none;">
-              🗑️ Delete
-            </a>
-          </span>
+<div class="product-detail-container">
+    <div class="product-detail-image">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+        <span style="font-size: 3rem; color: #bbb;">🛍️</span>
         {% endif %}
+    </div>
+    <div class="product-detail-info">
+        <div class="product-detail-title">{{ product.name }}</div>
+        <div class="product-detail-price">${{ product.price }}</div>
+        <div class="product-detail-brand">Brand: {{ product.brand.name }}</div>
+        <div class="product-detail-desc">{{ product.description }}</div>
+        <div class="product-detail-actions">
+            <form method="post" action="{% url 'cart:add_to_cart' product.id %}">
+                {% csrf_token %}
+                <button type="submit" class="add-to-cart-btn">🛒 Add to cart</button>
+            </form>
+            <form method="post" action="{% url 'catalog:like_product' product.id %}">
+                {% csrf_token %}
+                <button type="submit" class="like-btn{% if liked %} liked{% endif %}" title="Like">
+                    {% if liked %}
+                    <span>&#10084;</span><span class="product-detail-like-count">{{ like_count }}</span>
+                    {% else %}
+                    <span>&#9825;</span><span class="product-detail-like-count">{{ like_count }}</span>
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 
-        <br>
-        {{ review.comment }}
-        <br>
-        <small><em>{{ review.created_at|date:"F j, Y, H:i" }}</em></small>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No reviews yet. Be the first to review this product!</p>
-{% endif %}
+<div class="reviews-section">
+    <h3>📝 Reviews</h3>
+    {% if user.is_authenticated %}
+    {% if not user_has_review %}
+    <p>
+        <a href="{% url 'reviews:add_review' product.id %}">
+            <button
+                style="background-color: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">✍️
+                Write a Review</button>
+        </a>
+    </p>
+    {% endif %}
+    {% else %}
+    <p><em>Please <a href="{% url 'account_login' %}">login</a> to write a review.</em></p>
+    {% endif %}
 
+    {% if reviews %}
+    <ul class="review-list">
+        {% for review in reviews %}
+        <li class="review-item">
+            <strong>{{ review.user.username }}</strong>
+            {% if user.is_authenticated and review.user == user %}
+            <span class="review-actions">
+                <a href="{% url 'reviews:edit_review' review.id %}">✏️ Edit</a>
+                |
+                <a href="{% url 'reviews:delete_review' review.id %}" class="delete">🗑️ Delete</a>
+            </span>
+            {% endif %}
+            <br>
+            {{ review.comment }}
+            <br>
+            <small><em>{{ review.created_at|date:"F j, Y, H:i" }}</em></small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No reviews yet. Be the first to review this product!</p>
+    {% endif %}
+</div>
 {% endblock %}

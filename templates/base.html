@@ -5,39 +5,44 @@
     <meta charset="UTF-8">
     <title>{% block title %}Clothing Store{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- ✅ Navbar -->
-    <nav>
-        <ul>
-             <form action="{% url 'catalog:search_products' %}" method="get">
-            <input type="text" name="q" placeholder="Search products...">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{% url 'home' %}" class="store-name">Clothing Store</a>
+        </div>
+        
+        <div class="navbar-menu">
+            <form action="{% url 'catalog:search_products' %}" method="get" class="search-form">
+                <input type="text" name="q" placeholder="Search products...">
                 <button type="submit">Search</button>
             </form>
-            <h1></h1>
-            <li><a href="/">Home</a></li>
 
+            <div class="nav-links">
+                <a href="{% url 'catalog:brand_list' %}">Brands</a>
+                {% for cat in categories %}
+                    <a href="{% url 'catalog:category' slug=cat.slug %}">{{ cat.name }}</a>
+                {% endfor %}
+                <a href="{% url 'cart:view_cart' %}">Cart</a>
+            </div>
+        </div>
 
-            {% for cat in categories %}
-                <li><a href="{% url 'catalog:category' slug=cat.slug %}">{{ cat.name }}</a></li>
-            {% endfor %}
-            <li><a href="{% url 'catalog:brand_list' %}">Brands</a></li>
-            <li><a href="{% url 'cart:view_cart' %}">Cart</a></li>
-
+        <div class="navbar-end">
             {% if user.is_authenticated %}
-                <li><a href="{% url 'users:dashboard' %}">My Account</a></li>
-               <li><a href="{% url 'account_logout' %}">Logout</a></li>
+                <span class="user-greeting">Hello, {{ user.username }}</span>
+                <a href="{% url 'users:dashboard' %}" class="nav-button">My Account</a>
+                <a href="{% url 'account_logout' %}" class="nav-button logout">Logout</a>
             {% else %}
-                <li><a href="{% url 'account_login' %}">Login</a></li>
-                <li><a href="{% url 'account_signup' %}">Register</a></li>
+                <a href="{% url 'account_login' %}" class="nav-button">Sign In</a>
+                <a href="{% url 'account_signup' %}" class="nav-button signup">Sign Up</a>
             {% endif %}
-        </ul>
+        </div>
     </nav>
 
-    <hr>
-
-    <!-- ✅ Контент -->
-    {% block content %}
-    {% endblock %}
+    <main class="content">
+        {% block content %}
+        {% endblock %}
+    </main>
 </body>
 </html>

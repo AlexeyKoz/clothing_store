@@ -1,13 +1,12 @@
 {% extends "base.html" %}
-{% load i18n %}
 
-{% block title %}Edit Shipping Address - Clothing Store{% endblock %}
+{% block title %}Contact Support - {{ order.order_number }}{% endblock %}
 
 {% block content %}
 <div class="auth-form-container">
-    <div class="auth-form-card" style="max-width: 600px;">
-        <h1>📬 {% trans "Edit Shipping Address" %}</h1>
-        <p class="auth-subtitle">{% trans "Keep your shipping information up to date." %}</p>
+    <div class="auth-form-card" style="max-width: 700px;">
+        <h1>📝 Contact Support for Order #{{ order.order_number }}</h1>
+        <p class="auth-subtitle">Please fill out the form below to report an issue with your order.</p>
 
         <form method="post" class="auth-form">
             {% csrf_token %}
@@ -16,12 +15,12 @@
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
                 {% if field.errors %}
-                <div class="form-error">{{ field.errors }}</div>
+                <div class="form-error">{{ field.errors|join:", " }}</div>
                 {% endif %}
             </div>
             {% endfor %}
             <div class="auth-form-actions">
-                <button type="submit" class="auth-button">💾 {% trans "Save Address" %}</button>
+                <button type="submit" class="auth-button">✉️ Send Message</button>
             </div>
         </form>
     </div>

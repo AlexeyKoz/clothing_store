@@ -1,59 +1,77 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Account Settings{% endblock %}
+{% block title %}Account Settings - Clothing Store{% endblock %}
 
 {% block content %}
 <div class="settings-container">
-    <h1>⚙️ Account Settings</h1>
+    <h1><span class="icon">⚙️</span> Account Settings</h1>
 
     <div class="settings-section">
         <h2>👤 Account Information</h2>
         <div class="info-card">
-            <p><strong>Username:</strong> {{ request.user.username }}</p>
-            <p><strong>Email:</strong> {{ request.user.email }}</p>
-            <p><strong>First Name:</strong> {{ request.user.first_name|default:"Not set" }}</p>
-            <p><strong>Last Name:</strong> {{ request.user.last_name|default:"Not set" }}</p>
-            <p><strong>Date Joined:</strong> {{ request.user.date_joined|date:"F j, Y" }}</p>
+            <div class="info-content">
+                <p><strong>Username:</strong> {{ request.user.username }}</p>
+                <p><strong>Email:</strong> {{ request.user.email }}</p>
+                <p><strong>First Name:</strong> {{ request.user.first_name|default:"Not set" }}</p>
+                <p><strong>Last Name:</strong> {{ request.user.last_name|default:"Not set" }}</p>
+                <p><strong>Date Joined:</strong> {{ request.user.date_joined|date:"F j, Y" }}</p>
+            </div>
+            {% if not request.user.is_superuser %}
+            <div class="info-actions">
+                <a href="{% url 'users:change_name' %}" class="settings-button">
+                    ✏️ Change Your Name
+                </a>
+            </div>
+            {% endif %}
         </div>
     </div>
 
     <div class="settings-section">
         <h2>📧 Email Settings</h2>
-        <div class="settings-card">
-            <p>Change your email address or manage email preferences.</p>
-            <a href="{% url 'users:email_change' %}" class="settings-button">
-                ✏️ Change Email
-            </a>
+        <div class="info-card">
+            <div class="info-content">
+                <p>Change your email address or manage email preferences.</p>
+            </div>
+            <div class="info-actions">
+                <a href="{% url 'users:email_change' %}" class="settings-button">
+                    ✉️ Change Email
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="settings-section">
-        <h2>📬 Shipping Address</h2>
-        <div class="settings-card">
-            <p>Manage your shipping address for orders.</p>
-            <a href="{% url 'users:edit_address' %}" class="settings-button">
-                📍 Edit Address
-            </a>
-        </div>
-    </div>
-
-    <div class="settings-section">
-        <h2>🧾 Order History</h2>
-        <div class="settings-card">
-            <p>View your past orders and their status.</p>
-            <a href="{% url 'orders:order_list' %}" class="settings-button">
-                📋 View Orders
-            </a>
+        <h2>🚚 Shipping Address</h2>
+        <div class="info-card">
+            <div class="info-content">
+                {% if shipping_address %}
+                <p><strong>Address:</strong> {{ shipping_address.address }}</p>
+                <p><strong>City:</strong> {{ shipping_address.city }}</p>
+                <p><strong>Zip Code:</strong> {{ shipping_address.zip_code }}</p>
+                <p><strong>Country:</strong> {{ shipping_address.country }}</p>
+                {% else %}
+                <p>You have not set a shipping address.</p>
+                {% endif %}
+            </div>
+            <div class="info-actions">
+                <a href="{% url 'users:edit_address' %}" class="settings-button">
+                    📝 Edit Address
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="settings-section">
         <h2>🚪 Account Actions</h2>
-        <div class="settings-card">
-            <p>Manage your account and logout.</p>
-            <a href="#" onclick="confirmLogout()" class="settings-button logout-button">
-                🚪 Logout
-            </a>
+        <div class="info-card">
+            <div class="info-content">
+                <p>Manage your account and logout.</p>
+            </div>
+            <div class="info-actions">
+                <a href="{% url 'users:custom_logout' %}" class="settings-button logout-button">
+                    Logout
+                </a>
+            </div>
         </div>
     </div>
 </div>

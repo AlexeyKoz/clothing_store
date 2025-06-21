@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Manage Email - Clothing Store{% endblock %}
+
+{% block content %}
+<div class="auth-form-container">
+    <div class="auth-form-card" style="max-width: 600px;">
+        <h1>📧 {% trans "Manage E-mail Address" %}</h1>
+
+        {% if superuser_restriction %}
+        <div class="alert alert-warning">
+            <p>{% trans "Superuser accounts can only change their e-mail from the admin panel." %}</p>
+            <a href="{% url 'admin:index' %}" class="auth-button secondary">{% trans "Go to Admin" %}</a>
+        </div>
+        {% else %}
+
+        <div class="email-management-section">
+            <h2 class="form-section-title">{% trans "Current E-mail" %}</h2>
+            {% if current_email %}
+            <div class="email-item primary">
+                <div class="email-info">
+                    <strong>{{ current_email.email }}</strong>
+                    <span class="email-tag primary-tag">{% trans "Primary" %}</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <p>{% trans "No primary e-mail address found. It may be pending verification." %}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if pending_email %}
+        <hr class="form-divider">
+        <div class="email-management-section">
+            <h2 class="form-section-title">{% trans "Pending Verification" %}</h2>
+            <p class="auth-subtitle">{% blocktrans %}A verification link has been sent to the email address below.
+                Please check your inbox.{% endblocktrans %}</p>
+            <form action="{% url 'users:email_change' %}" class="auth-form" method="post">
+                {% csrf_token %}
+                <div class="email-item unverified">
+                    <div class="email-info">
+                        <strong>{{ pending_email.email }}</strong>
+                        <span class="email-tag unverified-tag">{% trans "Unverified" %}</span>
+                    </div>
+                    <div class="email-actions">
+                        <button type="submit" name="action_send" class="auth-button secondary">Re-send
+                            Verification</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        <hr class="form-divider">
+        <h2 class="form-section-title">{% trans "Change E-mail Address" %}</h2>
+        <form method="post" action="{% url 'users:email_change' %}" class="auth-form" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="auth-form-actions">
+                <button name="action_add" type="submit" class="auth-button">{% trans "Change E-mail" %}</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

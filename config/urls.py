@@ -23,6 +23,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
+from core.views import home_view
+from users import views as user_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,15 +32,18 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('', include('core.urls')),
+    path('', home_view, name='home'),
     path("users/", include("users.urls", namespace="users")),
     path('catalog/', include('catalog.urls')),
     path('cart/', include('cart.urls')),
     path('accounts/', include('allauth.urls')),
     path('orders/', include(('orders.urls', 'orders'), namespace='orders')),
     path('reviews/', include('reviews.urls', namespace='reviews')),
+    path('support/', include('support.urls')),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)

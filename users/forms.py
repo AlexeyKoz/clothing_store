@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator
 import datetime
 from users.models import UserProfile
 from orders.models import ShippingAddress
+from allauth.account.models import EmailAddress
 
 
 class ShippingAddressForm(forms.ModelForm):
@@ -64,3 +65,36 @@ class CustomSignupForm(SignupForm):
             )
 
         return user
+
+
+class ChangeEmailForm(forms.Form):
+    email = forms.EmailField(
+        label="New E-mail Address",
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter your new email'}),
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+
+        # Check if the email is already in use by another user.
+        if EmailAddress.objects.filter(email__iexact=email).exclude(user=self.user).exists():
+            raise forms.ValidationError(
+                "This e-mail address is already in use by another account.")
+
+        # Check if the user is trying to change to their current primary email.
+        primary_email = EmailAddress.objects.get_primary(self.user)
+        if primary_email and email == primary_email.email:
+            raise forms.ValidationError(
+                "This is already your current e-mail address.")
+
+        return email
+
+
+class ChangeNameForm(forms.Form):
+    first_name = forms.CharField(required=True, label="First Name")
+    last_name = forms.CharField(required=True, label="Last Name")

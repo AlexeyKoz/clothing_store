@@ -9,6 +9,7 @@ from cart.models import CartItem
 from .models import Order, OrderItem
 from orders.models import ShippingAddress
 
+
 @login_required
 def order_summary(request):
     if not request.session.get("terms_accepted"):
@@ -82,8 +83,34 @@ def generate_invoice(request, order_id):
 
 @login_required
 def order_detail(request, order_id):
-    order = Order.objects.get(id=order_id, user=request.user)
-    return render(request, "orders/order_detail.html", {"order": order})
+    try:
+        if request.user.is_staff:
+            order = Order.objects.get(id=order_id)
+        else:
+            order = Order.objects.get(id=order_id, user=request.user)
+    except Order.DoesNotExist:
+        messages.error(request, "The requested order could not be found.")
+        return redirect('orders:order_list')
+
+    support_tickets = order.support_tickets.all().order_by('-created_at')
+
+    # Pre-process items to avoid template logic errors
+    items_for_template = []
+    for item in order.items.all():
+        items_for_template.append({
+            'image_url': item.product.image.url if item.product.image else '/static/placeholder.png',
+            'product_name': item.product.name,
+            'get_absolute_url': item.product.get_absolute_url() if hasattr(item.product, 'get_absolute_url') else '#',
+            'quantity': item.quantity,
+            'total_price': item.total_price,
+        })
+
+    context = {
+        "order": order,
+        "support_tickets": support_tickets,
+        "order_items": items_for_template,
+    }
+    return render(request, "orders/order_detail.html", context)
 
 
 @login_required
@@ -97,7 +124,8 @@ def checkout_address(request):
     try:
         address = request.user.shippingaddress
     except ShippingAddress.DoesNotExist:
-        messages.warning(request, "Please fill your shipping address in your profile.")
+        messages.warning(
+            request, "Please fill your shipping address in your profile.")
         return redirect("users:edit_address")
 
     if request.method == "POST":
@@ -117,7 +145,8 @@ def checkout_payment(request):
         terms_accepted = request.POST.get("confirm")
 
         if not (payment_method and installments and terms_accepted):
-            messages.error(request, "Please fill in all fields and confirm the terms.")
+            messages.error(
+                request, "Please fill in all fields and confirm the terms.")
             return render(request, "orders/checkout_payment.html")
 
         request.session["payment_method"] = payment_method

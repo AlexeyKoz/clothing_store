@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Too Many Requests{% endblock %}
+
+{% block content %}
+<div class="auth-form-container">
+    <div class="auth-form-card text-center" style="max-width: 500px;">
+        <h1 style="font-size: 3rem; color: #ffc107;">⚠️</h1>
+        <h2 style="font-size: 1.75rem; color: #343a40; margin-bottom: 1rem;">{% trans "Too Many Requests" %}</h2>
+        <p class="auth-subtitle" style="margin-bottom: 2rem;">
+            {% trans "You have made too many requests recently. Please wait a moment and try again." %}
+        </p>
+        <div class="auth-form-actions">
+            <a href="{% url 'home' %}" class="auth-button">{% trans "Go to Homepage" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

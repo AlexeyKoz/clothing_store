@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}Edit Shipping Address - Clothing Store{% endblock %}
+{% block title %}Change Your Name - Clothing Store{% endblock %}
 
 {% block content %}
 <div class="auth-form-container">
     <div class="auth-form-card" style="max-width: 600px;">
-        <h1>📬 {% trans "Edit Shipping Address" %}</h1>
-        <p class="auth-subtitle">{% trans "Keep your shipping information up to date." %}</p>
+        <h1>✏️ {% trans "Change Your Name" %}</h1>
+        <p class="auth-subtitle">{% trans "Update your first and last name below." %}</p>
 
         <form method="post" class="auth-form">
             {% csrf_token %}
@@ -21,7 +21,7 @@
             </div>
             {% endfor %}
             <div class="auth-form-actions">
-                <button type="submit" class="auth-button">💾 {% trans "Save Address" %}</button>
+                <button type="submit" class="auth-button">💾 {% trans "Save Changes" %}</button>
             </div>
         </form>
     </div>

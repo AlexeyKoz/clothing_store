@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 import environ
 import os
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'reviews',
+    'support',
     'rest_framework',
     'api',
 ]
@@ -153,7 +155,6 @@ REST_FRAMEWORK = {
 }
 
 # JWT settings
-from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),

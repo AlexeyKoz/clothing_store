@@ -1,22 +1,111 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order #{{ order.order_number }} - Details{% endblock %}
 
 {% block content %}
-<h1>✅ Order Summary</h1>
+<div class="order-list-container">
+    <div class="page-header">
+        <h1>Order #{{ order.order_number }}</h1>
+        <div class="header-actions">
+            <a href="{% url 'orders:order_list' %}" class="settings-button secondary-button">← Back to Orders</a>
+            {% if not request.user.is_staff %}
+            <a href="{% url 'support:create_ticket' order_id=order.id %}" class="settings-button">Report an Issue</a>
+            {% endif %}
+        </div>
+    </div>
 
-<p><strong>Order Number:</strong> {{ order.order_number }}</p>
-<p><strong>Order ID:</strong> {{ order.id }}</p>
-<p><strong>Date:</strong> {{ order.created_at|date:"d.m.y" }}</p>
-<p><strong>Status:</strong> {{ order.status }}</p>
+    <div class="order-detail-container">
+        <div class="order-detail-main">
+            <div class="info-card order-items-card">
+                <div class="info-content">
+                    <h3>Items Ordered</h3>
+                    <ul class="order-item-list">
+                        {% for item in order_items %}
+                        <li class="cart-item">
+                            <img src="{{ item.image_url }}" alt="{{ item.product_name }}" class="cart-item-image">
+                            <div class="cart-item-details">
+                                <span class="product-name">{{ item.product_name }}</span>
+                                <span class="item-details">Qty: {{ item.quantity }}</span>
+                            </div>
+                            <strong class="item-total">${{ item.total_price }}</strong>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
 
-<hr>
-<h3>🛍 Products:</h3>
-<ul>
-  {% for item in order.items.all %}
-    <li>{{ item.product.name }} × {{ item.quantity }} — ${{ item.price }}</li>
-  {% endfor %}
-</ul>
+            {% if support_tickets %}
+            <div class="info-card" style="margin-top: 2rem;">
+                <div class="info-content">
+                    <h3>Support History for this Order</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Date Submitted</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ticket in support_tickets %}
+                            <tr>
+                                <td>#{{ ticket.id }}</td>
+                                <td>{{ ticket.created_at|date:"F j, Y" }}</td>
+                                <td>{{ ticket.subject }}</td>
+                                <td>{{ ticket.get_status_display }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
 
-<p><strong>Total with tax:</strong> ${{ order.total_with_tax }}</p>
+        <aside class="order-detail-sidebar">
+            <div class="info-card">
+                <div class="info-content">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Status:</span>
+                        <strong>{{ order.get_status_display }}</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Date:</span>
+                        <span>{{ order.created_at|date:"F j, Y" }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>${{ order.subtotal }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax:</span>
+                        <span>${{ order.tax }}</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row">
+                        <h4>Total:</h4>
+                        <h4>${{ order.total_with_tax }}</h4>
+                    </div>
+                </div>
+            </div>
 
-
+            {% if order.shipping_address %}
+            <div class="info-card">
+                <div class="info-content">
+                    <h3>Shipping Address</h3>
+                    <p>
+                        {{ order.shipping_address.full_name }}<br>
+                        {{ order.shipping_address.address }}<br>
+                        {{ order.shipping_address.city }}, {{ order.shipping_address.zip_code }}<br>
+                        {{ order.shipping_address.country }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+        </aside>
+    </div>
+</div>
 {% endblock %}

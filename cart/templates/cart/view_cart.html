@@ -1,59 +1,74 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block content %}
-<h1>🛒 Your Cart</h1>
+<div class="order-list-container">
+    <h1>🛒 Your Shopping Cart</h1>
 
-{% if items %}
-  <table style="width:100%; border-collapse: collapse;">
-    <thead>
-      <tr style="border-bottom: 2px solid #ccc;">
-        <th>#</th>
-        <th>Product</th>
-        <th style="text-align:right;">Price</th>
-        <th style="text-align:center;">Quantity</th>
-        <th style="text-align:right;">Remove</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in items %}
-      <tr style="border-bottom: 1px solid #eee;">
-        <td>{{ forloop.counter }}</td>
-        <td>
-          <a href="{% url 'catalog:product_detail' item.product.id %}">
-            {{ item.product.name }}
-          </a>
-        </td>
-        <td style="text-align:right;">${{ item.product.price }}</td>
-        <td style="text-align:center;">
-          <form method="post" action="{% url 'cart:update_quantity' item.product.id %}" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" name="action" value="decrease">➖</button>
-            {{ item.quantity }}
-            <button type="submit" name="action" value="increase">➕</button>
-          </form>
-        </td>
-        <td style="text-align:right;">
-          <form method="post" action="{% url 'cart:remove_from_cart' item.product.id %}" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" style="border:none; background:none;">
-              <img src="{% static 'icons/trash.svg' %}" alt="Remove" width="20" height="20">
-            </button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    {% if items %}
+    <div class="cart-container">
+        <div class="cart-items">
+            <h2>Cart Items</h2>
+            {% for item in items %}
+            <div class="cart-item">
+                <img src="{{ item.product.image.url|default:'/static/placeholder.png' }}" alt="{{ item.product.name }}"
+                    class="cart-item-image">
+                <div class="cart-item-details">
+                    <h3><a href="{% url 'catalog:product_detail' item.product.id %}">{{ item.product.name }}</a></h3>
+                    <p>Price: ${{ item.product.price }}</p>
+                    <div class="cart-item-actions">
+                        <form method="post" action="{% url 'cart:update_quantity' item.product.id %}"
+                            class="quantity-form">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="decrease" class="quantity-btn">-</button>
+                            <span class="item-quantity">{{ item.quantity }}</span>
+                            <button type="submit" name="action" value="increase" class="quantity-btn">+</button>
+                        </form>
+                        <form method="post" action="{% url 'cart:remove_from_cart' item.product.id %}"
+                            style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-btn">Remove</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="cart-item-total">
+                    <p><strong>${{ item.total_price }}</strong></p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-  <hr style="margin-top:20px; border-top: 2px solid #000;">
-  <p style="text-align:right; font-weight:bold;">Total: ${{ total }}</p>
-
-  <div style="text-align:right; margin-top: 20px;">
-    <a href="{% url 'cart:checkout' %}">
-      <button>🧾 Proceed to Checkout</button>
-    </a>
-  </div>
-{% else %}
-  <p>Your cart is empty.</p>
-{% endif %}
+        <aside class="cart-summary">
+            <h2>Order Summary</h2>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>${{ total }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span>Free</span>
+            </div>
+            <hr>
+            <div class="summary-row">
+                <strong>Total</strong>
+                <strong>${{ total }}</strong>
+            </div>
+            <a href="{% url 'cart:checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+            <div class="order-history-link">
+                <a href="{% url 'orders:order_list' %}">View Order History</a>
+            </div>
+        </aside>
+    </div>
+    {% else %}
+    <div class="empty-cart-container">
+        <h2>Your cart is empty.</h2>
+        <p>Looks like you haven't added anything to your cart yet.</p>
+        <a href="{% url 'home' %}" class="btn settings-button" style="display: inline-block; margin-top: 1rem;">Continue
+            Shopping</a>
+        <div class="order-history-link">
+            <p>Want to see your past orders? <a href="{% url 'orders:order_list' %}">View Order History</a></p>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

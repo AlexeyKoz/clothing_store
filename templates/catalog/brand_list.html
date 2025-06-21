@@ -1,10 +1,22 @@
 {% extends "base.html" %}
 
+{% block title %}All Brands - Clothing Store{% endblock %}
+
 {% block content %}
-  <h1>All Brands</h1>
-  <ul>
-    {% for brand in brands %}
-      <li><a href="{% url 'catalog:products_by_brand' brand.id %}">{{ brand.name }}</a></li>
-    {% endfor %}
-  </ul>
+<div class="brands-container">
+    <div class="brands-card">
+        <h1>🏷️ All Brands</h1>
+
+        <div class="brands-grid">
+            {% for brand in brands %}
+            <a href="{% url 'catalog:products_by_brand' brand.id %}" class="brand-item">
+                <div class="brand-card">
+                    <h3>{{ brand.name }}</h3>
+                    <span class="brand-arrow">→</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

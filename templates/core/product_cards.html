@@ -1,0 +1,30 @@
+{% for info in product_infos %}
+<div class="product-card-wrapper">
+    <a href="{% url 'catalog:product_detail' info.product.id %}" class="product-card-link">
+        <div class="product-card">
+            <div class="product-image">
+                {% if info.product.image %}
+                <img src="{{ info.product.image.url }}" alt="{{ info.product.name }}">
+                {% else %}
+                👕
+                {% endif %}
+            </div>
+
+            <div class="product-info">
+                <h3>{{ info.product.name }}</h3>
+                <p class="product-price">${{ info.product.price }}</p>
+                <p class="product-category">{{ info.product.category.name }}</p>
+            </div>
+
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'catalog:like_product' info.product.id %}" class="like-form">
+                {% csrf_token %}
+                <button type="submit" class="like-btn {% if info.liked %}liked{% endif %}" title="Like this product">
+                    <span class="like-count">{{ info.like_count }}</span>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </a>
+</div>
+{% endfor %}

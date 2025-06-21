@@ -1,42 +1,52 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h1>Products in Category: {{ category.name }}</h1>
+{% block title %}Products in {{ category.name|title }} - Clothing Store{% endblock %}
 
-{% if product_infos %}
-<div class="popular-products">
-    {% for info in product_infos %}
-    <a href="{% url 'catalog:product_detail' info.product.id %}" class="product-card-link">
-        <div class="product-card">
-            <div style="position: relative; width: 100%; display: flex; justify-content: center;">
-                {% if info.product.image %}
-                <div class="product-image"><img src="{{ info.product.image.url }}" alt="{{ info.product.name }}"
-                        class="product-image" /></div>
-                {% else %}
-                <div class="product-image">🛍️</div>
-                {% endif %}
-                <form method="post" action="{% url 'catalog:like_product' info.product.id %}" class="like-form"
-                    style="position: absolute; top: 8px; right: 8px; z-index: 2;">
-                    {% csrf_token %}
-                    <button type="submit" class="like-btn" title="Like"
-                        style="background: none; border: none; cursor: pointer; font-size: 1.3rem;">
-                        {% if info.liked %}
-                        <span style="color: #e74c3c;">&#10084;</span>
-                        {% else %}
-                        <span style="color: #bbb;">&#9825;</span>
+{% block content %}
+<div class="brand-products-container">
+    <div class="brand-products-card">
+        <h1>Products in Category: {{ category.name|title }}</h1>
+
+        {% if product_infos %}
+        <div class="products-grid">
+            {% for product_info in product_infos %}
+            <div class="product-card-wrapper">
+                <a href="{% url 'catalog:product_detail' product_info.product.id %}" class="product-card-link">
+                    <div class="product-card">
+                        <div class="product-image">
+                            {% if product_info.product.image %}
+                            <img src="{{ product_info.product.image.url }}" alt="{{ product_info.product.name }}">
+                            {% else %}
+                            👕
+                            {% endif %}
+                        </div>
+
+                        <div class="product-info">
+                            <h3>{{ product_info.product.name }}</h3>
+                            <p class="product-price">${{ product_info.product.price }}</p>
+                            <p class="product-category">Brand: {{ product_info.product.brand.name }}</p>
+                        </div>
+
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'catalog:like_product' product_info.product.id %}"
+                            class="like-form">
+                            {% csrf_token %}
+                            <button type="submit" class="like-btn {% if product_info.liked %}liked{% endif %}"
+                                title="Like this product">
+                                <span class="like-count">{{ product_info.like_count }}</span>
+                            </button>
+                        </form>
                         {% endif %}
-                        <span style="font-size: 0.95rem; color: #555; margin-left: 2px;">{{ info.like_count }}</span>
-                    </button>
-                </form>
+                    </div>
+                </a>
             </div>
-            <h3>{{ info.product.name }}</h3>
-            <p>{{ info.product.price }} $</p>
-            <p>Brand: {{ info.product.brand.name }}</p>
+            {% endfor %}
         </div>
-    </a>
-    {% endfor %}
+        {% else %}
+        <div class="no-products">
+            <p>No products found in this category.</p>
+        </div>
+        {% endif %}
+    </div>
 </div>
-{% else %}
-<p>No products in this category.</p>
-{% endif %}
 {% endblock %}

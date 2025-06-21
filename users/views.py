@@ -3,7 +3,9 @@ from django.contrib.auth.decorators import login_required
 from orders.models import ShippingAddress
 from orders.forms import ShippingAddressForm
 from django.shortcuts import redirect
-
+from django.contrib.auth import logout
+from django.contrib import messages
+from allauth.account.views import EmailView
 
 
 @login_required
@@ -28,3 +30,16 @@ def edit_address(request):
 
     return render(request, 'users/edit_address.html', {'form': form})
 
+
+@login_required
+def custom_logout(request):
+    if request.method == 'POST':
+        logout(request)
+        messages.success(request, "You have been successfully logged out.")
+        return redirect('home')
+    return redirect('home')
+
+
+@login_required
+def email_change_view(request):
+    return EmailView.as_view()(request)

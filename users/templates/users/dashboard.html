@@ -1,14 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h2>Welcome, {{ request.user.username }}!</h2>
-<p>You are logged in.</p>
-<li><a href="{% url 'account_logout' %}">Logout</a></li>
+{% extends 'base.html' %}
 
+{% block title %}Account Settings{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<div class="settings-container">
+    <h1>⚙️ Account Settings</h1>
+
+    <div class="settings-section">
+        <h2>👤 Account Information</h2>
+        <div class="info-card">
+            <p><strong>Username:</strong> {{ request.user.username }}</p>
+            <p><strong>Email:</strong> {{ request.user.email }}</p>
+            <p><strong>First Name:</strong> {{ request.user.first_name|default:"Not set" }}</p>
+            <p><strong>Last Name:</strong> {{ request.user.last_name|default:"Not set" }}</p>
+            <p><strong>Date Joined:</strong> {{ request.user.date_joined|date:"F j, Y" }}</p>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h2>📧 Email Settings</h2>
+        <div class="settings-card">
+            <p>Change your email address or manage email preferences.</p>
+            <a href="{% url 'users:email_change' %}" class="settings-button">
+                ✏️ Change Email
+            </a>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h2>📬 Shipping Address</h2>
+        <div class="settings-card">
+            <p>Manage your shipping address for orders.</p>
+            <a href="{% url 'users:edit_address' %}" class="settings-button">
+                📍 Edit Address
+            </a>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h2>🧾 Order History</h2>
+        <div class="settings-card">
+            <p>View your past orders and their status.</p>
+            <a href="{% url 'orders:order_list' %}" class="settings-button">
+                📋 View Orders
+            </a>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h2>🚪 Account Actions</h2>
+        <div class="settings-card">
+            <p>Manage your account and logout.</p>
+            <a href="#" onclick="confirmLogout()" class="settings-button logout-button">
+                🚪 Logout
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

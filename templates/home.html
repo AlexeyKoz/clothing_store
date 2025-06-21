@@ -6,38 +6,130 @@
 <h1>Welcome to the Clothing Store!</h1>
 
 <h2>🔥 Popular Products</h2>
-<div class="popular-products">
-    {% for info in product_infos %}
-    <a href="{% url 'catalog:product_detail' info.product.id %}" class="product-card-link">
-        <div class="product-card">
-            <div style="position: relative; width: 100%; display: flex; justify-content: center;">
-                {% if info.product.image %}
-                <div class="product-image"><img src="{{ info.product.image.url }}" alt="{{ info.product.name }}"
-                        class="product-image" /></div>
-                {% else %}
-                <div class="product-image">🛍️</div>
-                {% endif %}
-                <form method="post" action="{% url 'catalog:like_product' info.product.id %}" class="like-form"
-                    style="position: absolute; top: 8px; right: 8px; z-index: 2;">
-                    {% csrf_token %}
-                    <button type="submit" class="like-btn" title="Like"
-                        style="background: none; border: none; cursor: pointer; font-size: 1.3rem;">
-                        {% if info.liked %}
-                        <span style="color: #e74c3c;">&#10084;</span>
-                        {% else %}
-                        <span style="color: #bbb;">&#9825;</span>
-                        {% endif %}
-                        <span style="font-size: 0.95rem; color: #555; margin-left: 2px;">{{ info.like_count }}</span>
-                    </button>
-                </form>
-            </div>
-            <h3>{{ info.product.name }}</h3>
-            <p>{{ info.product.price }} $</p>
-            <p>Brand: {{ info.product.brand.name }}</p>
-        </div>
-    </a>
-    {% empty %}
-    <p>No popular products available.</p>
-    {% endfor %}
+<div class="popular-products" id="popular-products">
+    {% include 'core/product_cards.html' with product_infos=product_infos %}
 </div>
+
+<!-- Loading indicator -->
+<div id="loading-indicator" style="display: none; text-align: center; padding: 2rem;">
+    <div
+        style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;">
+    </div>
+    <p style="margin-top: 1rem; color: #666;">Loading more products...</p>
+</div>
+
+<!-- Debug info (remove this later) -->
+<div style="text-align: center; padding: 1rem; color: #666; font-size: 0.9rem;">
+    <p>Scroll down to load more products</p>
+    <p id="debug-info">Has more: {% if has_next %}Yes{% else %}No{% endif %} | Current page: 1</p>
+</div>
+
+<script>
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMore = {% if has_next %}true{% else %} false{% endif %};
+
+    // Debug function
+    function updateDebugInfo() {
+        const debugElement = document.getElementById('debug-info');
+        if (debugElement) {
+            debugElement.textContent = `Has more: ${hasMore ? 'Yes' : 'No'} | Current page: ${currentPage}`;
+        }
+    }
+
+    // Infinite scroll functionality
+    function loadMoreProducts() {
+        if (isLoading || !hasMore) {
+            console.log('Skipping load - isLoading:', isLoading, 'hasMore:', hasMore);
+            return;
+        }
+
+        console.log('Loading more products, page:', currentPage + 1);
+        isLoading = true;
+        currentPage++;
+
+        // Show loading indicator
+        document.getElementById('loading-indicator').style.display = 'block';
+
+        // Make AJAX request
+        fetch(`/?page=${currentPage}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Received data:', data);
+
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+
+                // Add new products to the grid
+                const productsContainer = document.getElementById('popular-products');
+                productsContainer.insertAdjacentHTML('beforeend', data.html);
+
+                // Update hasMore flag
+                hasMore = data.has_next;
+                updateDebugInfo();
+
+                console.log('Added products, hasMore:', hasMore);
+                isLoading = false;
+            })
+            .catch(error => {
+                console.error('Error loading more products:', error);
+                document.getElementById('loading-indicator').style.display = 'none';
+                isLoading = false;
+            });
+    }
+
+    // Scroll event listener as backup
+    window.addEventListener('scroll', function () {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+            loadMoreProducts();
+        }
+    });
+
+    // Intersection Observer for infinite scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && hasMore && !isLoading) {
+                console.log('Intersection observer triggered');
+                loadMoreProducts();
+            }
+        });
+    }, {
+        rootMargin: '200px' // Start loading when user is 200px away from bottom
+    });
+
+    // Observe the loading indicator
+    const loadingIndicator = document.getElementById('loading-indicator');
+    if (loadingIndicator) {
+        observer.observe(loadingIndicator);
+    }
+
+    // Also observe the last product card as backup
+    function observeLastProduct() {
+        const products = document.querySelectorAll('.product-card-link');
+        if (products.length > 0) {
+            const lastProduct = products[products.length - 1];
+            observer.observe(lastProduct);
+        }
+    }
+
+    // Initial observation
+    observeLastProduct();
+
+    // CSS for loading spinner
+    const style = document.createElement('style');
+    style.textContent = `
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+`;
+    document.head.appendChild(style);
+
+    // Update debug info on load
+    updateDebugInfo();
+</script>
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - Clothing Store{% endblock %}
+
+{% block content %}
+<div class="auth-form-container">
+    <div class="auth-form-card">
+        <h1>🔐 Sign In</h1>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="form-error">{{ field.errors }}</div>
+                {% endif %}
+                {% if field.help_text %}
+                <div class="form-help">{{ field.help_text }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="auth-form-actions">
+                <button type="submit" class="auth-button">🔑 Sign In</button>
+            </div>
+        </form>
+
+        <div class="auth-links">
+            <p>Don't have an account? <a href="{% url 'account_signup' %}">Create Account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

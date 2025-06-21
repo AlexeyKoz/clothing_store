@@ -17,10 +17,27 @@ def brand_list(request):
 
 def products_by_brand(request, brand_id):
     brand = get_object_or_404(Brand, id=brand_id)
-    products = Product.objects.filter(brand=brand)
+    products = (
+        Product.objects.filter(brand=brand)
+        .annotate(num_likes=models.Count('likes'))
+        .order_by('-num_likes', '-price')
+    )
+    # Prepare product info with like status and count
+    product_infos = []
+    user = request.user if request.user.is_authenticated else None
+    for product in products:
+        liked = False
+        if user:
+            liked = product.likes.filter(user=user).exists()
+        like_count = product.likes.count()
+        product_infos.append({
+            'product': product,
+            'liked': liked,
+            'like_count': like_count,
+        })
     return render(request, "catalog/products_by_brand.html", {
         "brand": brand,
-        "products": products
+        "product_infos": product_infos,
     })
 
 

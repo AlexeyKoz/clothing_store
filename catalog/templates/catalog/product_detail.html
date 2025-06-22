@@ -24,11 +24,7 @@
             <form method="post" action="{% url 'catalog:like_product' product.id %}">
                 {% csrf_token %}
                 <button type="submit" class="like-btn{% if liked %} liked{% endif %}" title="Like">
-                    {% if liked %}
-                    <span>&#10084;</span><span class="product-detail-like-count">{{ like_count }}</span>
-                    {% else %}
-                    <span>&#9825;</span><span class="product-detail-like-count">{{ like_count }}</span>
-                    {% endif %}
+                    <span class="product-detail-like-count">{{ like_count }}</span>
                 </button>
             </form>
         </div>

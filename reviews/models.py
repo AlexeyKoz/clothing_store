@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.SmallIntegerField(choices=[(i, i) for i in range(1, 6)])  # 1-5 star rating
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)  # Добавлено для отслеживания изменений

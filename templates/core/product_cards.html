@@ -16,14 +16,26 @@
                 <p class="product-category">{{ info.product.category.name }}</p>
             </div>
 
-            {% if user.is_authenticated %}
-            <form method="post" action="{% url 'catalog:like_product' info.product.id %}" class="like-form">
-                {% csrf_token %}
-                <button type="submit" class="like-btn {% if info.liked %}liked{% endif %}" title="Like this product">
+            <div class="like-button-container">
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'catalog:like_product' info.product.id %}" class="like-form">
+                    {% csrf_token %}
+                    <button type="submit" class="compact-like-btn {% if info.liked %}liked{% endif %}" title="Like this product" onclick="event.stopPropagation(); event.preventDefault(); this.form.submit();">
+                        {% if info.liked %}
+                        ❤️
+                        {% else %}
+                        🤍
+                        {% endif %}
+                        {{ info.like_count }}
+                    </button>
+                </form>
+                {% else %}
+                <div class="compact-like-display">
+                    <span class="like-heart">🤍</span>
                     <span class="like-count">{{ info.like_count }}</span>
-                </button>
-            </form>
-            {% endif %}
+                </div>
+                {% endif %}
+            </div>
         </div>
     </a>
 </div>

@@ -11,7 +11,21 @@ environ.Env.read_env(BASE_DIR / '.env')
 # Security
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-override-this-key")
 DEBUG = env.bool("DEBUG", default=True)
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+
+# Security Settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# HTTPS Settings (for production)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Applications
 INSTALLED_APPS = [
@@ -140,9 +154,17 @@ CACHES = {
         'LOCATION': 'redis://localhost:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
+            'CONNECTION_POOL_KWARGS': {'max_connections': 50},
+            'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
+        },
+        'KEY_PREFIX': 'clothing_store',
+        'TIMEOUT': 300,  # 5 minutes default timeout
     }
 }
+
+# Use Redis for session storage
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 # REST Framework settings
 REST_FRAMEWORK = {

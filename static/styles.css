@@ -257,6 +257,13 @@ body {
     transform: translateY(-6px) scale(1.03);
 }
 
+.like-form {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+}
+
 @media (max-width: 600px) {
     .popular-products {
         grid-template-columns: 1fr;
@@ -392,14 +399,30 @@ body {
     background: #fff;
     color: #e74c3c;
     border: 1px solid #e74c3c;
+    border-radius: 6px;
+    padding: 0.6rem 1.3rem;
     display: flex;
     align-items: center;
     gap: 0.3rem;
+    min-width: auto;
+    min-height: auto;
+}
+
+.product-detail-actions .like-btn::before {
+    content: '♡';
+    color: #e74c3c;
+    font-size: 1.2rem;
+    margin-right: 0.3rem;
 }
 
 .product-detail-actions .like-btn.liked {
     background: #e74c3c;
     color: #fff;
+}
+
+.product-detail-actions .like-btn.liked::before {
+    content: '♥';
+    color: white;
 }
 
 .product-detail-actions .like-btn.liked .product-detail-like-count {
@@ -409,6 +432,10 @@ body {
 .product-detail-actions .like-btn:hover {
     background: #e74c3c;
     color: #fff;
+}
+
+.product-detail-actions .like-btn:hover::before {
+    color: white;
 }
 
 .product-detail-like-count {
@@ -947,13 +974,6 @@ body {
     position: relative;
 }
 
-.product-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    height: 100%;
-}
-
 .product-card {
     background: #ffffff;
     border: 2px solid #e9ecef;
@@ -1029,31 +1049,48 @@ body {
 }
 
 .like-btn {
-    background: none;
-    border: none;
-    padding: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e74c3c;
+    border-radius: 50%;
+    padding: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: transform 0.2s ease;
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 40px;
+    min-height: 40px;
 }
 
 .like-btn:hover {
     transform: scale(1.1);
+    background: #e74c3c;
+    color: white;
+}
+
+.like-btn:hover::before {
+    color: white;
 }
 
 .like-btn::before {
-    content: '\2661';
-    /* Unliked Heart ♡ */
+    content: '♡';
+    /* Unliked Heart */
     color: #e74c3c;
     font-size: 1.5rem;
-    font-family: 'Arial Unicode MS', 'serif';
+    font-family: 'Arial', sans-serif;
     margin-right: 4px;
+    display: inline-block;
+}
+
+.like-btn.liked {
+    background: #e74c3c;
+    color: white;
 }
 
 .like-btn.liked::before {
-    content: '\2665';
-    /* Liked Heart ♥ */
+    content: '♥';
+    /* Liked Heart */
+    color: white;
 }
 
 .like-count {
@@ -1222,6 +1259,19 @@ body {
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #ddd;
     margin-bottom: 1rem;
+}
+
+.cart-item-image-placeholder {
+    width: 100px;
+    height: 100px;
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #6c757d;
 }
 
 .cart-item-image {
@@ -1424,5 +1474,63 @@ body {
 .table thead th {
     font-weight: 600;
     color: #333;
+}
+
+/* Compact Like Button - Just Heart and Number */
+.like-button-container {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 20;
+}
+
+.compact-like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #e74c3c;
+    transition: all 0.3s ease;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-direction: row;
+    white-space: nowrap;
+}
+
+.compact-like-btn:hover {
+    background: rgba(231, 76, 60, 0.1);
+    transform: scale(1.1);
+}
+
+.compact-like-btn.liked {
+    color: #e74c3c;
+}
+
+.compact-like-btn.liked:hover {
+    background: rgba(231, 76, 60, 0.15);
+}
+
+/* Display for non-logged in users */
+.compact-like-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 16px;
+    color: #e74c3c;
+    padding: 4px 8px;
+    flex-direction: row;
+    white-space: nowrap;
+}
+
+.like-heart {
+    font-size: 16px;
+}
+
+.like-count {
+    font-weight: 600;
+    font-size: 14px;
 }
 }

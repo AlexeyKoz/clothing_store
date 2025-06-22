@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compact Like Button Demo</title>
+    <style>
+        .product-card-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+        }
+
+        .product-card {
+            background: #ffffff;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            width: 250px;
+            height: 300px;
+            position: relative;
+        }
+
+        .product-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .product-info h3 {
+            color: #212529;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .product-price {
+            color: #007bff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .product-category {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Compact Like Button - Just Heart and Number */
+        .like-button-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 20;
+        }
+
+        .compact-like-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #e74c3c;
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .compact-like-btn:hover {
+            background: rgba(231, 76, 60, 0.1);
+            transform: scale(1.1);
+        }
+
+        .compact-like-btn.liked {
+            color: #e74c3c;
+        }
+
+        .compact-like-btn.liked:hover {
+            background: rgba(231, 76, 60, 0.15);
+        }
+
+        /* Display for non-logged in users */
+        .compact-like-display {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 16px;
+            color: #e74c3c;
+            padding: 4px 8px;
+        }
+
+        .like-heart {
+            font-size: 16px;
+        }
+
+        .like-count {
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Compact Like Button Demo</h1>
+    
+    <h2>Product Card with Unliked Button (Logged In User):</h2>
+    <div class="product-card-wrapper">
+        <div class="product-card">
+            <div class="like-button-container">
+                <button class="compact-like-btn" onclick="alert('Like clicked!')">
+                    🤍 5
+                </button>
+            </div>
+            <div class="product-image">👕</div>
+            <div class="product-info">
+                <h3>Test Product</h3>
+                <p class="product-price">$29.99</p>
+                <p class="product-category">Test Category</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>Product Card with Liked Button (Logged In User):</h2>
+    <div class="product-card-wrapper">
+        <div class="product-card">
+            <div class="like-button-container">
+                <button class="compact-like-btn liked" onclick="alert('Unlike clicked!')">
+                    ❤️ 12
+                </button>
+            </div>
+            <div class="product-image">👕</div>
+            <div class="product-info">
+                <h3>Test Product (Liked)</h3>
+                <p class="product-price">$29.99</p>
+                <p class="product-category">Test Category</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>Product Card with Like Display (Non-Logged In User):</h2>
+    <div class="product-card-wrapper">
+        <div class="product-card">
+            <div class="like-button-container">
+                <div class="compact-like-display">
+                    <span class="like-heart">🤍</span>
+                    <span class="like-count">8</span>
+                </div>
+            </div>
+            <div class="product-image">👕</div>
+            <div class="product-info">
+                <h3>Test Product (View Only)</h3>
+                <p class="product-price">$29.99</p>
+                <p class="product-category">Test Category</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>What You Should See:</h2>
+    <ul>
+        <li><strong>Compact Design:</strong> Just heart emoji + number, no circular background</li>
+        <li><strong>Visible to All:</strong> Like counters shown to both logged-in and non-logged-in users</li>
+        <li><strong>Heart States:</strong> 🤍 for unliked, ❤️ for liked</li>
+        <li><strong>Hover Effect:</strong> Subtle background and scale effect on hover</li>
+        <li><strong>Clean Look:</strong> Minimal design that doesn't interfere with product cards</li>
+    </ul>
+
+    <h2>Key Changes:</h2>
+    <ul>
+        <li>✅ Like counters visible to everyone (logged in or not)</li>
+        <li>✅ Compact button design without circular background</li>
+        <li>✅ Just heart emoji + number display</li>
+        <li>✅ Subtle hover effects</li>
+        <li>✅ Non-logged users see like count but can't interact</li>
+    </ul>
+</body>
+</html> 
